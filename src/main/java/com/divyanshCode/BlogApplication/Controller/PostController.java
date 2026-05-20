@@ -57,7 +57,7 @@ public class PostController {
         return ResponseEntity.ok().body(postDto1);
    }
 
-   @PreAuthorize("hasRole('ADMIN','USER')")
+   @PreAuthorize("hasAnyRole('ADMIN','USER')")
    @GetMapping("/getPostByPostId/{postId}")
    public ResponseEntity<PostDto> getPostByPostId(@PathVariable Integer postId)
    {

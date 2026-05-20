@@ -34,8 +34,8 @@ public class CommentImpl  implements commentService {
     @Override
     public CommentDto createComment(CommentDto commentDto, Integer postId, Integer userId) {
 
-        User user = this.userRepo.findById(userId).orElseThrow(()-> new ResourceNotFound("user not found with id : "+userId));
-        Post post = this.postRepo.findById(postId).orElseThrow(()-> new ResourceNotFound("post not found with id: "+postId));
+        User user = this.userRepo.findById(userId).orElseThrow(() -> new ResourceNotFound("user not found with id : " + userId));
+        Post post = this.postRepo.findById(postId).orElseThrow(() -> new ResourceNotFound("post not found with id: " + postId));
 
         Comment comment = this.modelMapper.map(commentDto, Comment.class);
 
@@ -44,39 +44,53 @@ public class CommentImpl  implements commentService {
 
         Comment savedComment = this.commentRepo.save(comment);
 
-        return this.modelMapper.map(savedComment, CommentDto.class);
+        CommentDto dto = new CommentDto();
+
+        dto.setCommentId(savedComment.getCommentId());
+        dto.setComment(savedComment.getComment());
+        dto.setPostId(savedComment.getPost().getPostId());
+        dto.setUserId(savedComment.getUser().getUserId());
+
+        return dto;
     }
 
     @Override
     public void deleteComment(Integer commentId) {
 
-        Comment comment = this.commentRepo.findById(commentId).orElseThrow(()-> new ResourceNotFound("comment not found with id : "+commentId));
+        Comment comment = this.commentRepo.findById(commentId).orElseThrow(() -> new ResourceNotFound("comment not found with id : " + commentId));
 
-         this.commentRepo.delete(comment);
+        this.commentRepo.delete(comment);
     }
 
     @Override
     public CommentDto getCommentById(Integer commentId) {
 
-        Comment comment = this.commentRepo.findById(commentId).orElseThrow(()-> new ResourceNotFound("comment not found with id "+commentId));
-        return this.modelMapper.map(comment, CommentDto.class);
+        Comment comment = this.commentRepo.findById(commentId).orElseThrow(() -> new ResourceNotFound("comment not found with id " + commentId));
+        CommentDto dto = new CommentDto();
+        dto.setCommentId(comment.getCommentId());
+        dto.setComment(comment.getComment());
+        dto.setPostId(comment.getPost().getPostId());
+        dto.setUserId(comment.getUser().getUserId());
+        return dto;
     }
 
     @Override
     public List<CommentDto> getCommentByPostId(Integer postId) {
 
-       Post post = this.postRepo.findById(postId).orElseThrow(()-> new ResourceNotFound("post not found with id "+postId));
+        Post post = this.postRepo.findById(postId).orElseThrow(() -> new ResourceNotFound("post not found with id " + postId));
 
-     List<Comment> commentList = this.commentRepo.findByPost(post);
+        List<Comment> commentList = this.commentRepo.findByPost(post);
 
-     List<CommentDto> commentDtoList = new ArrayList<>();
+        List<CommentDto> commentDtoList = new ArrayList<>();
 
-     for(Comment c : commentList)
-     {
-         commentDtoList.add(this.modelMapper.map(c, CommentDto.class));
-     }
-
-     return commentDtoList;
+        for (Comment c : commentList) {
+            CommentDto dto = new CommentDto();
+            dto.setCommentId(c.getCommentId());
+            dto.setComment(c.getComment());
+            dto.setPostId(c.getPost().getPostId());
+            dto.setUserId(c.getUser().getUserId());
+            commentDtoList.add(dto);
+        }
+      return  commentDtoList;
     }
-
 }

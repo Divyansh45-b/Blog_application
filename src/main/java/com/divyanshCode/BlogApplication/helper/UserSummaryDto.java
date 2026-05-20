@@ -6,4 +6,6 @@ import lombok.Data;
 public class UserSummaryDto {
 
     private int userId;
+
+    private String name;
 }

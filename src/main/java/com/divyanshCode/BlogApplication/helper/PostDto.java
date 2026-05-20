@@ -1,5 +1,6 @@
 package com.divyanshCode.BlogApplication.helper;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -12,8 +13,10 @@ public class PostDto {
 
     private int postId;
 
+    @NotBlank(message = "content cannot be blank")
     private String content;
 
+    @NotBlank(message = "title cannot be blank")
     private String title;
 
     private String imageName;

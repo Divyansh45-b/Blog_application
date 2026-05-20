@@ -88,7 +88,7 @@ public class UserImpl implements userService {
 
         for(User u : newList)
         {
-            userDtoList.add(this.modelMapper.map(u,UserDto.class));
+            userDtoList.add(this.userToDto(u));
         }
 
         ///setting userResponse here.
@@ -134,7 +134,6 @@ public class UserImpl implements userService {
         userDto.setUserId(user.getUserId());
         userDto.setName(user.getName());
         userDto.setEmail(user.getEmail());
-        userDto.setPassword(user.getPassword());
         userDto.setAbout(user.getAbout());
 
         return userDto;
