@@ -5,6 +5,7 @@ import com.divyanshCode.BlogApplication.Service.commentService;
 
 import com.divyanshCode.BlogApplication.helper.CommentDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -45,9 +46,12 @@ public class CommentController {
 
    @PreAuthorize("hasAnyRole('ADMIN','USER')")
    @GetMapping("/commentsByPostId/{postId}")
-    public ResponseEntity<List<CommentDto>> getCommentsByPostId(@PathVariable Integer postId)
+    public ResponseEntity<Page<CommentDto>> getCommentsByPostId(@PathVariable Integer postId,
+                                                                @RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(defaultValue = "10") int size)
    {
-       List<CommentDto> commentDto = this.commentService.getCommentByPostId(postId);
-       return ResponseEntity.ok(commentDto);
+       return ResponseEntity.ok(this.commentService.getCommentByPostId(postId, page, size));
    }
+
+
 }

@@ -11,6 +11,9 @@ import com.divyanshCode.BlogApplication.Service.commentService;
 import com.divyanshCode.BlogApplication.helper.CommentDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -74,23 +77,25 @@ public class CommentImpl  implements commentService {
         return dto;
     }
 
+
     @Override
-    public List<CommentDto> getCommentByPostId(Integer postId) {
+    public Page<CommentDto> getCommentByPostId(Integer postId, int page, int size) {
 
-        Post post = this.postRepo.findById(postId).orElseThrow(() -> new ResourceNotFound("post not found with id " + postId));
+        Post post = this.postRepo.findById(postId)
+                .orElseThrow(() ->
+                        new ResourceNotFound("post not found with id " + postId));
 
-        List<Comment> commentList = this.commentRepo.findByPost(post);
+        Pageable pageable = PageRequest.of(page, size);
 
-        List<CommentDto> commentDtoList = new ArrayList<>();
+        Page<Comment> commentPage = this.commentRepo.findByPost(post, pageable);
 
-        for (Comment c : commentList) {
+        return commentPage.map(c -> {
             CommentDto dto = new CommentDto();
             dto.setCommentId(c.getCommentId());
             dto.setComment(c.getComment());
             dto.setPostId(c.getPost().getPostId());
             dto.setUserId(c.getUser().getUserId());
-            commentDtoList.add(dto);
-        }
-      return  commentDtoList;
+            return dto;
+        });
     }
 }

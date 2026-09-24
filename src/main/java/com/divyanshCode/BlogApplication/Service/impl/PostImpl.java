@@ -11,7 +11,7 @@ import com.divyanshCode.BlogApplication.Repository.postRepo;
 import com.divyanshCode.BlogApplication.Repository.userRepo;
 import com.divyanshCode.BlogApplication.Service.postService;
 import com.divyanshCode.BlogApplication.helper.PostDto;
-;
+
 import com.divyanshCode.BlogApplication.helper.PostResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,40 +126,31 @@ public class PostImpl implements postService {
 
     ///getPostByCategory
     @Override
-    public List<PostDto> getPostByCategory(Integer categoryId) {
+    public Page<PostDto> getPostByCategory(Integer categoryId, int page, int size) {
 
        Category category = this.categoryRepo.findById(categoryId)
                .orElseThrow(()-> new ResourceNotFound("category not found with id : "+categoryId));
 
-       List<Post> posts = this.postRepo.findByCategory(category);
+       Pageable pageable = PageRequest.of(page, size);
 
-      List<PostDto> postDtoList = new ArrayList<>();
+       Page<Post> posts = this.postRepo.findByCategory(category, pageable);
 
-      for(Post p : posts)
-      {
-          postDtoList.add(this.modelMapper.map(p,PostDto.class));
-      }
-
-      return postDtoList;
+        return posts.map(p -> this.modelMapper.map(p, PostDto.class));
     }
 
     ///getPostByUser
     @Override
-    public List<PostDto> getPostByUser(Integer userId) {
+    public Page<PostDto> getPostByUser(Integer userId, int page, int size) {
 
         User user = this.userRepo.findById(userId)
-                .orElseThrow(()-> new ResourceNotFound("user not found with id : "+ userId));
+                .orElseThrow(() ->
+                        new ResourceNotFound("user not found with id : " + userId));
 
-        List<Post> posts = this.postRepo.findByUser(user);
+        Pageable pageable = PageRequest.of(page, size);
 
-        List<PostDto> postDtoList = new ArrayList<>();
+        Page<Post> posts = this.postRepo.findByUser(user, pageable);
 
-        for(Post p : posts)
-        {
-            postDtoList.add(this.modelMapper.map(p, PostDto.class));
-        }
-
-        return postDtoList;
+        return posts.map(p -> this.modelMapper.map(p, PostDto.class));
     }
 
     @Override

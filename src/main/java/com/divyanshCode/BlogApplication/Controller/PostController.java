@@ -3,6 +3,7 @@ import com.divyanshCode.BlogApplication.Service.postService;
 import com.divyanshCode.BlogApplication.helper.PostDto;
 import com.divyanshCode.BlogApplication.helper.PostResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -68,21 +69,22 @@ public class PostController {
    ///get by user
    @PreAuthorize("hasAnyRole('ADMIN','USER')")
    @GetMapping("/postByUser/{userId}")
-    public ResponseEntity<List<PostDto>> getPostByUser(@PathVariable Integer userId)
-    {
+    public ResponseEntity<Page<PostDto>> getPostByUser(@PathVariable Integer userId,
+                                                       @RequestParam(defaultValue = "0") int page,
+                                                       @RequestParam(defaultValue = "10") int size) {
+       return ResponseEntity.ok(this.postService.getPostByUser(userId, page, size));
+   }
 
-        List<PostDto> postDto = this.postService.getPostByUser(userId);
-        return ResponseEntity.ok().body(postDto);
-
-    }
 
     ///get by category
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @GetMapping("/postByCategory/{categoryId}")
-    public ResponseEntity<List<PostDto>> getPostByCategory(@PathVariable Integer categoryId)
+    public ResponseEntity<Page<PostDto>> getPostByCategory(@PathVariable Integer categoryId,
+                                                           @RequestParam(defaultValue = "0") int page,
+                                                           @RequestParam(defaultValue = "10") int size)
     {
-        List<PostDto> posts = this.postService.getPostByCategory(categoryId);
-        return ResponseEntity.ok().body(posts);
+        Page<PostDto> posts = this.postService.getPostByCategory(categoryId, page, size);
+        return ResponseEntity.ok(this.postService.getPostByCategory(categoryId, page, size));
     }
 
 

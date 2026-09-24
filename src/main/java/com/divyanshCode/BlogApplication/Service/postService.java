@@ -4,6 +4,7 @@ package com.divyanshCode.BlogApplication.Service;
 
 import com.divyanshCode.BlogApplication.helper.PostDto;
 import com.divyanshCode.BlogApplication.helper.PostResponse;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -26,13 +27,14 @@ public interface postService {
 
 
     /// getPostByCategory
-    List<PostDto> getPostByCategory(Integer categoryId);
+    Page<PostDto> getPostByCategory(Integer categoryId, int page, int size);
 
 
     /// getPostByUser
-    List<PostDto> getPostByUser(Integer userId);
+    Page<PostDto> getPostByUser(Integer userId, int page, int size);
 
 
     /// search by keyword
     List<PostDto> searchPost (String keyword);
+
 }
